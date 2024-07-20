@@ -4,10 +4,10 @@ import argparse
 import glob
 import torch
 from torchvision.transforms.functional import normalize
-from basicsr.utils import imwrite, img2tensor, tensor2img
-from basicsr.utils.download_util import load_file_from_url
-from basicsr.utils.misc import get_device
-from basicsr.utils.registry import ARCH_REGISTRY
+from basicsrL.utils import imwrite, img2tensor, tensor2img
+from basicsrL.utils.download_util import load_file_from_url
+from basicsrL.utils.misc import get_device
+from basicsrL.utils.registry import ARCH_REGISTRY
 
 pretrain_model_url = 'https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/codeformer_inpainting.pth'
 
@@ -16,11 +16,11 @@ if __name__ == '__main__':
     device = get_device()
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-i', '--input_path', type=str, default='./inputs/masked_faces', 
+    parser.add_argument('-i', '--input_path', type=str, default='./inputs/masked_faces',
                     help='Input image or folder. Default: inputs/masked_faces')
-    parser.add_argument('-o', '--output_path', type=str, default=None, 
+    parser.add_argument('-o', '--output_path', type=str, default=None,
                     help='Output folder. Default: results/<input_name>')
-    parser.add_argument('--suffix', type=str, default=None, 
+    parser.add_argument('--suffix', type=str, default=None,
                     help='Suffix of the restored faces. Default: None')
     args = parser.parse_args()
 
@@ -42,11 +42,11 @@ if __name__ == '__main__':
     test_img_num = len(input_img_list)
 
     # ------------------ set up CodeFormer restorer -------------------
-    net = ARCH_REGISTRY.get('CodeFormer')(dim_embd=512, codebook_size=512, n_head=8, n_layers=9, 
+    net = ARCH_REGISTRY.get('CodeFormer')(dim_embd=512, codebook_size=512, n_head=8, n_layers=9,
                                             connect_list=['32', '64', '128']).to(device)
-    
+
     # ckpt_path = 'weights/CodeFormer/codeformer.pth'
-    ckpt_path = load_file_from_url(url=pretrain_model_url, 
+    ckpt_path = load_file_from_url(url=pretrain_model_url,
                                     model_dir='weights/CodeFormer', progress=True, file_name=None)
     checkpoint = torch.load(ckpt_path)['params_ema']
     net.load_state_dict(checkpoint)

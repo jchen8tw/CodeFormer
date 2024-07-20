@@ -13,12 +13,12 @@ import gradio as gr
 
 from torchvision.transforms.functional import normalize
 
-from basicsr.archs.rrdbnet_arch import RRDBNet
-from basicsr.utils import imwrite, img2tensor, tensor2img
-from basicsr.utils.download_util import load_file_from_url
-from basicsr.utils.misc import gpu_is_available, get_device
-from basicsr.utils.realesrgan_utils import RealESRGANer
-from basicsr.utils.registry import ARCH_REGISTRY
+from basicsrL.archs.rrdbnet_arch import RRDBNet
+from basicsrL.utils import imwrite, img2tensor, tensor2img
+from basicsrL.utils.download_util import load_file_from_url
+from basicsrL.utils.misc import gpu_is_available, get_device
+from basicsrL.utils.realesrgan_utils import RealESRGANer
+from basicsrL.utils.registry import ARCH_REGISTRY
 
 from facelib.utils.face_restoration_helper import FaceRestoreHelper
 from facelib.utils.misc import is_gray
@@ -119,9 +119,9 @@ def inference(image, background_enhance, face_upsample, upscale, codeformer_fide
 
         upscale = int(upscale) # convert type to int
         if upscale > 4: # avoid memory exceeded due to too large upscale
-            upscale = 4 
+            upscale = 4
         if upscale > 2 and max(img.shape[:2])>1000: # avoid memory exceeded due to too large img resolution
-            upscale = 2 
+            upscale = 2
         if max(img.shape[:2]) > 1500: # avoid memory exceeded due to too large img resolution
             upscale = 1
             background_enhance = False
@@ -221,7 +221,7 @@ description = r"""<center><img src='https://user-images.githubusercontent.com/14
 🤗 Try CodeFormer for improved stable-diffusion generation!<br>
 """
 article = r"""
-If CodeFormer is helpful, please help to ⭐ the <a href='https://github.com/sczhou/CodeFormer' target='_blank'>Github Repo</a>. Thanks! 
+If CodeFormer is helpful, please help to ⭐ the <a href='https://github.com/sczhou/CodeFormer' target='_blank'>Github Repo</a>. Thanks!
 [![GitHub Stars](https://img.shields.io/github/stars/sczhou/CodeFormer?style=social)](https://github.com/sczhou/CodeFormer)
 
 ---
@@ -240,7 +240,7 @@ If our work is useful for your research, please consider citing:
 
 📋 **License**
 
-This project is licensed under <a rel="license" href="https://github.com/sczhou/CodeFormer/blob/master/LICENSE">S-Lab License 1.0</a>. 
+This project is licensed under <a rel="license" href="https://github.com/sczhou/CodeFormer/blob/master/LICENSE">S-Lab License 1.0</a>.
 Redistribution and use for non-commercial purposes should follow this license.
 
 📧 **Contact**
@@ -249,7 +249,7 @@ If you have any questions, please feel free to reach me out at <b>shangchenzhou@
 
 <div>
     🤗 Find Me:
-    <a href="https://twitter.com/ShangchenZhou"><img style="margin-top:0.5em; margin-bottom:0.5em" src="https://img.shields.io/twitter/follow/ShangchenZhou?label=%40ShangchenZhou&style=social" alt="Twitter Follow"></a> 
+    <a href="https://twitter.com/ShangchenZhou"><img style="margin-top:0.5em; margin-bottom:0.5em" src="https://img.shields.io/twitter/follow/ShangchenZhou?label=%40ShangchenZhou&style=social" alt="Twitter Follow"></a>
     <a href="https://github.com/sczhou"><img style="margin-top:0.5em; margin-bottom:2em" src="https://img.shields.io/github/followers/sczhou?style=social" alt="Github Follow"></a>
 </div>
 
@@ -269,7 +269,7 @@ demo = gr.Interface(
     ],
     title=title,
     description=description,
-    article=article,       
+    article=article,
     examples=[
         ['01.png', True, True, 2, 0.7],
         ['02.jpg', True, True, 2, 0.7],

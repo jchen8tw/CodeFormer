@@ -21,7 +21,7 @@ import PIL.Image
 import scipy
 import scipy.ndimage
 import argparse
-from basicsr.utils.download_util import load_file_from_url
+from basicsrL.utils.download_util import load_file_from_url
 
 try:
     import dlib
@@ -30,7 +30,7 @@ except ImportError:
 
 # download model from: http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
 shape_predictor_url = 'https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/shape_predictor_68_face_landmarks-fbdc2cb8.dat'
-ckpt_path = load_file_from_url(url=shape_predictor_url, 
+ckpt_path = load_file_from_url(url=shape_predictor_url,
                                     model_dir='weights/dlib', progress=True, file_name=None)
 predictor = dlib.shape_predictor('weights/dlib/shape_predictor_68_face_landmarks-fbdc2cb8.dat')
 
@@ -130,7 +130,7 @@ def align_face(filepath, out_path):
         img = img.resize(rsize, PIL.Image.ANTIALIAS)
         quad /= shrink
         qsize /= shrink
- 
+
     # Crop.
     border = max(int(np.rint(qsize * 0.1)), 3)
     crop = (int(np.floor(min(quad[:, 0]))), int(np.floor(min(quad[:, 1]))),
@@ -200,6 +200,6 @@ if __name__ == '__main__':
     for i, in_path in enumerate(img_list):
         img_name = os.path.basename(in_path)
         print(f'[{i+1}/{test_img_num}] Processing: {img_name}')
-        out_path = os.path.join(args.out_dir, in_path.split("/")[-1])        
+        out_path = os.path.join(args.out_dir, in_path.split("/")[-1])
         out_path = out_path.replace('.jpg', '.png')
         size_ = align_face(in_path, out_path)
