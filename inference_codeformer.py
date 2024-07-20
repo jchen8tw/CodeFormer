@@ -32,6 +32,14 @@ def set_realesrgan():
                 0) for gpu in no_half_gpu_list]:
             use_half = True
 
+    model_path = os.path.join('weights/realesrgan', 'realesr-general-x4v3.pth')
+    dni_weight = None
+    if args.denoise_strength != 1:
+        wdn_model_path = model_path.replace(
+            'realesr-general-x4v3', 'realesr-general-wdn-x4v3')
+        model_path = [model_path, wdn_model_path]
+        dni_weight = [args.denoise_strength, 1 - args.denoise_strength]
+
     model = SRVGGNetCompact(
         num_in_ch=3,
         num_out_ch=3,
@@ -42,8 +50,8 @@ def set_realesrgan():
 
     upsampler = RealESRGANer(
         scale=4,
-        model_path="./weights/realesrgan/realesr-general-x4v3.pth",
-        dni_weight=0.5,
+        model_path=model_path,
+        dni_weight=dni_weight,
         model=model,
         tile=args.bg_tile,
         tile_pad=40,
@@ -87,7 +95,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--input_path', type=str, default='./inputs/whole_imgs',
                         help='Input image, video or folder. Default: inputs/whole_imgs')
     parser.add_argument('-o', '--output_path', type=str, default=None,
-                        help='Output folder. Default: results/<input_name>_<w>')
+                        help='Output folder. Default: results/<input_name>_w<w>_dn<dn>')
     parser.add_argument('-w', '--fidelity_weight', type=float, default=0.5,
                         help='Balance the quality and fidelity. Default: 0.5')
     parser.add_argument('-s', '--upscale', type=int, default=2,
@@ -114,6 +122,13 @@ if __name__ == '__main__':
         type=str,
         default='None',
         help='Background upsampler. Optional: realesrgan')
+    parser.add_argument(
+        '-dn',
+        '--denoise_strength',
+        type=float,
+        default=0.5,
+        help=('Denoise strength. 0 for weak denoise (keep noise), 1 for strong denoise ability. '
+              'Only used for the realesr-general-x4v3 model'))
     parser.add_argument(
         '--face_upsample',
         action='store_true',
@@ -142,7 +157,7 @@ if __name__ == '__main__':
     if args.input_path.endswith(
             ('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG')):  # input single img path
         input_img_list = [args.input_path]
-        result_root = f'results/test_img_{w}'
+        result_root = f'results/test_img_w{w}_dn{args.denoise_strength}'
     # input video path
     elif args.input_path.endswith(('mp4', 'mov', 'avi', 'MP4', 'MOV', 'AVI')):
         from basicsrL.utils.video_util import VideoReader, VideoWriter
@@ -155,7 +170,7 @@ if __name__ == '__main__':
         audio = vidreader.get_audio()
         fps = vidreader.get_fps() if args.save_video_fps is None else args.save_video_fps
         video_name = os.path.basename(args.input_path)[:-4]
-        result_root = f'results/{video_name}_{w}'
+        result_root = f'results/{video_name}_w{w}_dn{args.denoise_strength}'
         input_video = True
         vidreader.close()
     else:  # input img folder
